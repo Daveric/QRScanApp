@@ -6,16 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
-using ScanApp.Views;
+using ScanApp.Models;
 using Xamarin.Forms;
 
-namespace ScanApp
+namespace ScanApp.Views
 {
   public partial class MainPage : ContentPage
   {
-
     private readonly AuthenticationResult _authenticationResult;
-    private string _userName = string.Empty;
+    private bool _userHasAccess = false;
     public MainPage(AuthenticationResult authResult)
     {
       _authenticationResult = authResult;
@@ -34,25 +33,17 @@ namespace ScanApp
       var handler = new JwtSecurityTokenHandler();
       var data = handler.ReadJwtToken(_authenticationResult.IdToken);
       Label.Text = $"Welcome {data.Claims.FirstOrDefault(x => x.Type.Equals("name"))?.Value}\n" +
-                   $" please hit the button to scan the QRCode";
-      _userName = data.Claims.FirstOrDefault(x => x.Type.Equals("emails"))?.Value;
+                   "please hit the button to scan the QRCode";
+      _userHasAccess = Convert.ToBoolean(data.Claims.FirstOrDefault(x => x.Type.Equals("ThirdLevelAuth"))?.Value);
     }
 
     private async void OnScanClicked(object sender, EventArgs e)
     {
-      try
+      var scanner = DependencyService.Get<IQrScanningService>();
+      var result = await scanner.ScanAsync();
+      if (result != null)
       {
-        var scanner = DependencyService.Get<IQrScanningService>();
-        var result = await scanner.ScanAsync();
-        if (result != null)
-        {
-          SetUserToApp(result);
-        }
-      }
-      catch (Exception ex)
-      {
-
-        throw;
+        SetAccessToMachine(result);
       }
     }
 
@@ -62,43 +53,43 @@ namespace ScanApp
       await Navigation.PushAsync(new LoginPage());
     }
 
-    private async void SetUserToApp(string appId)
+    private async void SetAccessToMachine(string appId)
     {
-      var request = new UserRequest
+      var request = new MachineUpdateModel()
       {
-        AppId = appId,
-        Email = _userName
+        Id = appId,
+        UserHasAccess = _userHasAccess
       };
       var url = Application.Current.Resources["UrlAPI"].ToString();
-      var response = await PostUserToAppAsync(
+      var response = await Update(
         url,
         "/api",
-        "/Applications/SetUserToApp",
+        "/machine/",
         request);
 
       if (!response.IsSuccess)
       {
-        await Xamarin.Forms.Application.Current.MainPage.DisplayAlert(
+        await Application.Current.MainPage.DisplayAlert(
           "Error",
           response.Message,
           "Accept");
         return;
       }
 
-      await Xamarin.Forms.Application.Current.MainPage.DisplayAlert(
+      await Application.Current.MainPage.DisplayAlert(
         "Ok",
         response.Message,
         "Accept");
     }
 
-    private async Task<Response> PostUserToAppAsync(string urlBase,
+    private static async Task<Response> Update(string urlBase,
       string servicePrefix,
       string controller,
-      UserRequest setUserToAppRequest)
+      MachineUpdateModel machine)
     {
       try
       {
-        var request = JsonConvert.SerializeObject(setUserToAppRequest);
+        var request = JsonConvert.SerializeObject(machine);
         var content = new StringContent(request, Encoding.UTF8, "application/json");
         var client = new HttpClient
         {
@@ -106,7 +97,7 @@ namespace ScanApp
         };
 
         var url = $"{servicePrefix}{controller}";
-        var response = await client.PostAsync(url, content);
+        var response = await client.PutAsync(url, content);
         var answer = await response.Content.ReadAsStringAsync();
         var obj = JsonConvert.DeserializeObject<Response>(answer);
         return obj;

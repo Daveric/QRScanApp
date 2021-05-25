@@ -2,9 +2,9 @@
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ScanApp.App">
-    <Application.Resources>
+  <Application.Resources>
 
       <!--Parameters-->
-      <x:String x:Key="UrlAPI">https://appauthorization.azurewebsites.net</x:String>
+    <x:String x:Key="UrlAPI">http://localhost:7071</x:String>
   </Application.Resources>
 </Application>

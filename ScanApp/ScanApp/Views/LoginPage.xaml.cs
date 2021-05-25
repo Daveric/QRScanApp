@@ -23,7 +23,7 @@ namespace ScanApp.Views
         var enumerable = accounts.ToList();
         if (enumerable.Any())
         {
-          AuthenticationResult result = await App.AuthenticationClient
+          var result = await App.AuthenticationClient
             .AcquireTokenSilent(Constants.Scopes, enumerable.FirstOrDefault())
             .ExecuteAsync();
 
@@ -37,7 +37,7 @@ namespace ScanApp.Views
       base.OnAppearing();
     }
 
-    async void OnSignInClicked(object sender, EventArgs e)
+    private async void OnSignInClicked(object sender, EventArgs e)
     {
       try
       {
