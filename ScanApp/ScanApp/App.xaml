@@ -1,10 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:scanApp="clr-namespace:ScanApp;assembly=ScanApp"
              x:Class="ScanApp.App">
   <Application.Resources>
+    <!-- Locator -->
+    <scanApp:InstanceLocator x:Key="Locator"/>
 
-      <!--Parameters-->
-    <x:String x:Key="UrlAPI">http://localhost:7071</x:String>
+    <!--Parameters-->
+    <x:String x:Key="UrlAPI">https://thirdlevelauthorizationapi.azurewebsites.net</x:String>
   </Application.Resources>
 </Application>

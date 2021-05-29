@@ -1,4 +1,4 @@
-﻿namespace ScanApp
+﻿namespace ScanApp.Models
 {
   public class Response
   {

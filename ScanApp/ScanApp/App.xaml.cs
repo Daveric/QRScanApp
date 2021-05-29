@@ -6,6 +6,8 @@ namespace ScanApp
 {
   public partial class App : Application
   {
+    public static NavigationPage Navigator { get; internal set; }
+    public static MainPage Main { get; internal set; }
     public static IPublicClientApplication AuthenticationClient { get; private set; }
 
     public static object UIParent { get; set; } = null;
@@ -19,7 +21,7 @@ namespace ScanApp
         .WithRedirectUri($"msal{Constants.ClientId}://auth")
         .Build();
 
-      MainPage = new NavigationPage(new LoginPage());
+      MainPage = new LoginPage(false);
     }
 
     protected override void OnStart()
