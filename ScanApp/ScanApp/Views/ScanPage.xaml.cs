@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using ScanApp.Models;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using ScanApp.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -30,10 +30,11 @@ namespace ScanApp.Views
     }
     private async void GetAccess(string appId)
     {
+      var encryption = new EncryptDecryptString();
       var request = new UnlockRequestSetAccessModel()
       {
         RequestId = appId,
-        UserRole = UserRole
+        UserRole = encryption.EncryptString(UserRole)
       };
       var url = Application.Current.Resources["UrlAPI"].ToString();
       var response = await UnlockAccess(
@@ -66,6 +67,7 @@ namespace ScanApp.Views
       {
         var request = JsonConvert.SerializeObject(requestSetAccess);
         var content = new StringContent(request, Encoding.UTF8, "application/json");
+
         var client = new HttpClient
         {
           BaseAddress = new Uri(urlBase)
