@@ -31,10 +31,16 @@ namespace ScanApp.Views
       var enumerable = accounts.ToList();
       if (enumerable.Any())
       {
-        authenticationResult = await App.AuthenticationClient
-          .AcquireTokenSilent(Constants.Scopes, enumerable.FirstOrDefault())
-          .ExecuteAsync();
-        
+        try
+        {
+          authenticationResult = await App.AuthenticationClient
+            .AcquireTokenSilent(Constants.Scopes, enumerable.FirstOrDefault())
+            .ExecuteAsync();
+        }
+        catch
+        {
+          authenticationResult = await LogIn();
+        }
 
         if (_logOut && authenticationResult != null)
         {

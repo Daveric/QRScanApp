@@ -21,11 +21,18 @@ namespace ScanApp.Views
 
     private async void OnScanClicked(object sender, EventArgs e)
     {
-      var scanner = DependencyService.Get<IQrScanningService>();
-      var result = await scanner.ScanAsync();
-      if (result != null)
+      try
       {
-        GetAccess(result);
+        var scanner = DependencyService.Get<IQrScanningService>();
+        var result = await scanner.ScanAsync();
+        if (result != null)
+        {
+          GetAccess(result);
+        }
+      }
+      catch
+      {
+        // ignored
       }
     }
     private async void GetAccess(string appId)

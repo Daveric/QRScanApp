@@ -7,7 +7,7 @@
   <ContentPage.Content>
     <StackLayout  Padding="8"  BindingContext="{Binding Scan}">
         <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-          <Label Text="Please hit the button bellow to scan" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
+          <Label Text="Please hit the button to scan" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
         </Frame>
       <Button Text="Scan" Clicked="OnScanClicked"  VerticalOptions="EndAndExpand"/>
     </StackLayout>
