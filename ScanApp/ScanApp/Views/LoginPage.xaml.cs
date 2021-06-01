@@ -39,6 +39,7 @@ namespace ScanApp.Views
         }
         catch
         {
+          await App.AuthenticationClient.RemoveAsync(enumerable.FirstOrDefault());
           authenticationResult = await LogIn();
         }
 
